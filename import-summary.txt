@@ -1,0 +1,94 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .DS_Store
+* .gitignore
+* AndroidManifest.xml
+* README.md
+* com.saurik.substrate_0.9.4010.apk
+* ic_launcher-web.png
+* jni/
+* jni/Android.mk
+* jni/DexFile.h
+* jni/hookdvm.cpp
+* jni/libsubstrate-dvm.so
+* jni/libsubstrate.so
+* jni/substrate.h
+* obj/
+* obj/local/
+* obj/local/armeabi/
+* obj/local/armeabi/libhookdvm.cy.so
+* obj/local/armeabi/libhookdvm.so
+* obj/local/armeabi/libstdc++.a
+* obj/local/armeabi/libsubstrate-dvm.so
+* obj/local/armeabi/libsubstrate.so
+* obj/local/armeabi/libtest.cy.so
+* obj/local/armeabi/objs/
+* obj/local/armeabi/objs/hookdvm.cy/
+* obj/local/armeabi/objs/hookdvm.cy/hookdvm.cy.o
+* obj/local/armeabi/objs/hookdvm.cy/hookdvm.cy.o.d
+* obj/local/armeabi/objs/hookdvm.cy/hookdvm.o
+* obj/local/armeabi/objs/hookdvm.cy/hookdvm.o.d
+* obj/local/armeabi/objs/hookdvm/
+* obj/local/armeabi/objs/hookdvm/hookdvm.o
+* obj/local/armeabi/objs/hookdvm/hookdvm.o.d
+* obj/local/armeabi/objs/test.cy/
+* obj/local/armeabi/objs/test.cy/hookdvm.o
+* obj/local/armeabi/objs/test.cy/hookdvm.o.d
+* obj/local/armeabi/objs/test.cy/test.o
+* obj/local/armeabi/objs/test.cy/test.o.d
+* proguard-project.txt
+* res/
+* res/drawable-hdpi/
+* res/drawable-hdpi/ic_launcher.png
+* res/drawable-mdpi/
+* res/drawable-mdpi/ic_launcher.png
+* res/drawable-xhdpi/
+* res/drawable-xhdpi/ic_launcher.png
+* res/drawable-xxhdpi/
+* res/drawable-xxhdpi/ic_launcher.png
+* res/layout/
+* res/layout/activity_main.xml
+* res/menu/
+* res/menu/main.xml
+* res/values-v11/
+* res/values-v11/styles.xml
+* res/values-v14/
+* res/values-v14/styles.xml
+* res/values-w820dp/
+* res/values-w820dp/dimens.xml
+* res/values/
+* res/values/dimens.xml
+* res/values/strings.xml
+* res/values/styles.xml
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* libs/armeabi/libhookdvm.cy.so => cydiaSubstrateHook/src/main/jniLibs/armeabi/libhookdvm.cy.so
+* libs/armeabi/libsubstrate-dvm.so => cydiaSubstrateHook/src/main/jniLibs/armeabi/libsubstrate-dvm.so
+* libs/armeabi/libsubstrate.so => cydiaSubstrateHook/src/main/jniLibs/armeabi/libsubstrate.so
+* src/ => cydiaSubstrateHook/src/main/java/
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

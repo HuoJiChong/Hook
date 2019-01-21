@@ -29,6 +29,7 @@ int hookPuts()
     return 0;
 }
 
+
 int unHook()
 {
     if (inlineUnHook((uint32_t)puts) != ELE7EN_OK)

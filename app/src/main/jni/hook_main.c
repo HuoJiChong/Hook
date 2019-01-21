@@ -25,7 +25,7 @@ int hookPuts()
         printf("inline hook failed");
         return -1;
     }
-    puts("I Love MIMI");
+    puts("Roger Hook ");
     return 0;
 }
 
@@ -48,4 +48,6 @@ JNIEXPORT void JNICALL Java_com_aly_roger_hook_MainActivity_nativeActivityTest(J
     hookPuts();
 
     puts("test after");
+    unHook();
+
 }

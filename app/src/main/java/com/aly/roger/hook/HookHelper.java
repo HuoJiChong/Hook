@@ -7,12 +7,15 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.aly.roger.hook.proxy.AMSHookInvocationHandler;
 import com.aly.roger.hook.proxy.ActivityProxyInstrumentation;
 import com.aly.roger.hook.proxy.ApplicationInstrumentation;
 import com.aly.roger.hook.proxy.ClipboardHookRemoteBinderHandler;
@@ -26,6 +29,8 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 
 import javax.xml.parsers.FactoryConfigurationError;
+
+import static com.aly.roger.hook.proxy.AMSHookInvocationHandler.ORITINALLY_INIENT;
 
 /**
  * Hook 帮助类
@@ -225,6 +230,48 @@ public class HookHelper {
 
     }
 
+//    /**
+//     * 第一步， API 26 以后，hook android.app.ActivityManager.IActivityManagerSingleton， API 25 以前，hook android.app.ActivityManagerNative.gDefault
+//     * 第二步，获取我们的代理对象，这里因为是接口，所以我们使用动态代理的方式
+//     * 第三步：设置为我们的代理对象
+//     *
+//     * @param context
+//     * @throws ClassNotFoundException
+//     * @throws NoSuchFieldException
+//     * @throws IllegalAccessException
+//     */
+//    private static void hookAMS(Context context) throws ClassNotFoundException,
+//            NoSuchFieldException, IllegalAccessException {
+//        // 第一步，  API 26 以后，hook android.app.ActivityManager.IActivityManagerSingleton，
+//        //  API 25 以前，hook android.app.ActivityManagerNative.gDefault
+//        Field gDefaultField = null;
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            Class<?> activityManager = Class.forName("android.app.ActivityManager");
+//            gDefaultField = activityManager.getDeclaredField("IActivityManagerSingleton");
+//        } else {
+//            Class<?> activityManagerNativeClass = Class.forName("android.app.ActivityManagerNative");
+//            gDefaultField = activityManagerNativeClass.getDeclaredField("gDefault");
+//        }
+//        gDefaultField.setAccessible(true);
+//        Object gDefaultObj = gDefaultField.get(null); //所有静态对象的反射可以通过传null获取。如果是实列必须传实例
+//        Class<?> singletonClazz = Class.forName("android.util.Singleton");
+//        Field amsField = singletonClazz.getDeclaredField("mInstance");
+//        amsField.setAccessible(true);
+//        Object amsObj = amsField.get(gDefaultObj);
+//
+//        //
+//        String pmName = getPMName(context);
+//        String hostClzName = getHostClzName(context, pmName);
+//
+//        // 第二步，获取我们的代理对象，这里因为是接口，所以我们使用动态代理的方式
+//        amsObj = Proxy.newProxyInstance(context.getClass().getClassLoader(), amsObj.getClass()
+//                .getInterfaces(), new AMSHookInvocationHandler(amsObj, pmName, hostClzName));
+//
+//        // 第三步：设置为我们的代理对象
+//        amsField.set(gDefaultObj, amsObj);
+//    }
+//
+//
 //    private static void hookLaunchActivity(Context context,boolean isAppCompatActivity) throws Exception {
 //        Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
 //        Field sCurrentActivityThreadField = activityThreadClass.getDeclaredField("sCurrentActivityThread");
@@ -237,7 +284,7 @@ public class HookHelper {
 //        callbackField.setAccessible(true);
 //        callbackField.set(mH,new ActivityThreadHandlerCallBack(context,isAppCompatActivity));
 //    }
-
+//
 //    public static class ActivityThreadHandlerCallBack implements Handler.Callback{
 //
 //        private final boolean mIsAppCompatActivity;
@@ -263,7 +310,7 @@ public class HookHelper {
 //            return false;
 //        }
 //    }
-
+//
 //    private static void handleLaunchActivity(Context context,Message msg,boolean isAppCompatActivity){
 //
 //        try {
@@ -272,7 +319,7 @@ public class HookHelper {
 //            intentField.setAccessible(true);
 //            Intent proxyIntent = (Intent)intentField.get(obj);
 //
-//            Intent originallyIntent = proxyIntent.getParcelableExtra(ORIGINALLY_INTENT);
+//            Intent originallyIntent = proxyIntent.getParcelableExtra(ORITINALLY_INIENT);
 //            if (originallyIntent == null){
 //                return;
 //            }
@@ -309,5 +356,15 @@ public class HookHelper {
 //        iPackageManagerField.setAccessible(true);
 //        iPackageManagerField.set(activityThread,proxy);
 //
+//    }
+//
+//    private static String getHostClzName(Context context, String pmName) {
+//        return null;
+//    }
+//
+//    private static String getPMName(Context context) {
+//        PackageManager pm = context.getPackageManager();
+////        pm.getpacka
+//        return null;
 //    }
 }

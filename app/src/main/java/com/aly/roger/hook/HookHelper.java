@@ -1,21 +1,31 @@
 package com.aly.roger.hook;
 
+import android.app.Activity;
+import android.app.Instrumentation;
 import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
+import com.aly.roger.hook.proxy.ActivityProxyInstrumentation;
+import com.aly.roger.hook.proxy.ApplicationInstrumentation;
 import com.aly.roger.hook.proxy.ClipboardHookRemoteBinderHandler;
 import com.aly.roger.hook.proxy.HookedClickListenerProxy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
+
+import javax.xml.parsers.FactoryConfigurationError;
 
 /**
  * Hook 帮助类
@@ -182,8 +192,122 @@ public class HookHelper {
         Map<String,IBinder> sCache = (Map<String,IBinder>)sCacheField.get(null);
         sCache.put(Context.CLIPBOARD_SERVICE,hookBinder);
 
-//        Main main = new Main();
-//        main.nativeTest();
-//        main.handleLoadPackage();
     }
+
+    public static void replaceInstrumentation(Activity ac) throws Exception {
+        Class<?> k = Activity.class;
+//        通过Activity.class拿到mInstrumentation字段
+        Field field = k.getDeclaredField("mInstrumentation");
+        field.setAccessible(true);
+//        根据activity内的mInstrumentation字段，获取Instrumentation对象
+        Instrumentation instrumentation = (Instrumentation) field.get(ac);
+        Instrumentation instrumentationProxy = new ActivityProxyInstrumentation(instrumentation);
+//        进行替换
+        field.set(ac,instrumentationProxy);
+    }
+
+    public static void attachContext() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+        Log.i(Tag,"attachContext");
+//        获取ActivityThrea
+        Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+        Method currentActivityThreadMethod = activityThreadClass.getDeclaredMethod("currentActivityThread");
+        currentActivityThreadMethod.setAccessible(true);
+
+        Object currentActivityThread = currentActivityThreadMethod.invoke(null);
+
+        Field mInstrumentationField = activityThreadClass.getDeclaredField("mInstrumentation");
+        mInstrumentationField.setAccessible(true);
+        Instrumentation mInstrumentation = (Instrumentation) mInstrumentationField.get(currentActivityThread);
+//创建代理对象
+        Instrumentation evilInstrumentation = new ApplicationInstrumentation(mInstrumentation);
+//替换
+        mInstrumentationField.set(currentActivityThread,evilInstrumentation);
+
+    }
+
+//    private static void hookLaunchActivity(Context context,boolean isAppCompatActivity) throws Exception {
+//        Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+//        Field sCurrentActivityThreadField = activityThreadClass.getDeclaredField("sCurrentActivityThread");
+//        sCurrentActivityThreadField.setAccessible(true);
+//        Object sCurrentActivityThreadObj = sCurrentActivityThreadField.get(null);
+//        Field mHField = activityThreadClass.getDeclaredField("mH");
+//        mHField.setAccessible(true);
+//        Handler mH = (Handler) mHField.get(sCurrentActivityThreadObj);
+//        Field callbackField = Handler.class.getDeclaredField("mCallback");
+//        callbackField.setAccessible(true);
+//        callbackField.set(mH,new ActivityThreadHandlerCallBack(context,isAppCompatActivity));
+//    }
+
+//    public static class ActivityThreadHandlerCallBack implements Handler.Callback{
+//
+//        private final boolean mIsAppCompatActivity;
+//        private final Context mContext;
+//        public ActivityThreadHandlerCallBack(Context context, boolean isAppCompatActivity) {
+//            mContext = context;
+//            mIsAppCompatActivity = isAppCompatActivity;
+//        }
+//
+//        @Override
+//        public boolean handleMessage(Message message) {
+//            int LAUNCH_ACTIVITY = 0;
+//            try {
+//                Class<?> clazz = Class.forName("android.app.ActivityThread$H");
+//                Field field = clazz.getField("LAUNCH_ACTIVITY");
+//                LAUNCH_ACTIVITY = field.getInt(null);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            if (message.what == LAUNCH_ACTIVITY){
+//                handleLaunchActivity(mContext,message,mIsAppCompatActivity);
+//            }
+//            return false;
+//        }
+//    }
+
+//    private static void handleLaunchActivity(Context context,Message msg,boolean isAppCompatActivity){
+//
+//        try {
+//            Object obj = msg.obj;
+//            Field intentField = obj.getClass().getDeclaredField("intent");
+//            intentField.setAccessible(true);
+//            Intent proxyIntent = (Intent)intentField.get(obj);
+//
+//            Intent originallyIntent = proxyIntent.getParcelableExtra(ORIGINALLY_INTENT);
+//            if (originallyIntent == null){
+//                return;
+//            }
+//            proxyIntent.setComponent(originallyIntent.getComponent());
+//
+//            Log.e(Tag,"handleLaunchActivity"+originallyIntent.getComponent().getClassName());
+//
+//            if (!isAppCompatActivity){
+//                return;
+//            }
+//            hookPM(context);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+//
+//    private static void hookPM(Context context) throws Exception {
+//        String pmName = getPMName(context);
+//        String hostClzName = getHostClzName(context,pmName);
+//
+//        Class<?> forName = Class.forName("android.app.ActivityThread");
+//        Field field = forName.getDeclaredField("sCurrentActivityThread");
+//        field.setAccessible(true);
+//        Object activityThread = field.get(null);
+//        Method getPackageManager = activityThread.getClass().getDeclaredMethod("getPackageManager");
+//        Object iPackageManager = getPackageManager.invoke(activityThread);
+//
+//        PackageManagerHandler handler = new PackageManagerHandler(iPackageManager,pmName,hostClzName);
+//
+//        Class<?> iPackageManagerIntercept = Class.forName("android.content.pm.IPackageManager");
+//        Object proxy = Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),new Class<?>[]{iPackageManagerIntercept},handler);
+//        Field iPackageManagerField = activityThread.getClass().getDeclaredField("sPackageManager");
+//        iPackageManagerField.setAccessible(true);
+//        iPackageManagerField.set(activityThread,proxy);
+//
+//    }
 }

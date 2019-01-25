@@ -17,7 +17,6 @@
             </intent-filter>
         </activity>
 
-
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -30,10 +29,7 @@
             android:name="xposedminversion"
             android:value="30" />
 
+        <activity android:name=".HookActivityTest"></activity>
     </application>
-
-
-
-
 
 </manifest>

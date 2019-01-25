@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -49,19 +50,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        Button button_hookActivity = findViewById(R.id.button_hookActivity);
+        button_hookActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),HookActivityTest.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getApplicationContext().startActivity(intent);
+            }
+        });
+
         try {
             HookHelper.hookOnClickListener(button_hook);
             HookHelper.hookNotificationManager(this);
 //            HookHelper.hookClipboardManager(this);
             HookHelper.hookClipboardService();
 
-
-//            JNI.nativeTest();
-            nativeActivityTest();
+//            HookHelper.replaceInstrumentation(this);
+            HookHelper.attachContext();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     @Override
